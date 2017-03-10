@@ -83,14 +83,10 @@ function _curry(Closure $closure, $direction) {
 }
 
 function _curry_step(array $args, $remaining_steps, Closure $closure, $direction) {
-  --$remaining_steps;
-  if ($remaining_steps > 0) {
-    return function ($arg) use ($remaining_steps, $closure, $args, $direction) {
-      $to_merge = [
-        $direction > 0 ? $args : [$arg],
-        $direction > 0 ? [$arg] : $args,
-      ];
-      return _curry_step(array_merge(...$to_merge), $remaining_steps, $closure, $direction);
+  if ($remaining_steps > 1) {
+    return function ($arg) use ($args, $remaining_steps, $closure, $direction) {
+      $new_args = $direction > 0 ? array_merge($args, [$arg]) : array_merge([$arg], $args);
+      return _curry_step($new_args, $remaining_steps - 1, $closure, $direction);
     };
   }
   else {
@@ -100,15 +96,13 @@ function _curry_step(array $args, $remaining_steps, Closure $closure, $direction
 
 function bind(Closure $closure, ...$early_args): Closure {
   return function (...$late_args) use ($closure, $early_args) {
-    $args = array_merge($early_args, $late_args);
-    return $closure(...$args);
+    return $closure(...array_merge($early_args, $late_args));
   };
 }
 
 function bind_right(Closure $closure, ...$early_args): Closure {
   return function (...$late_args) use ($closure, $early_args) {
-    $args = array_merge($late_args, $early_args);
-    return $closure(...$args);
+    return $closure(...array_merge($late_args, $early_args));
   };
 }
 
