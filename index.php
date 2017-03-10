@@ -17,11 +17,11 @@ function main() {
   };
 
   $two = function ($a, $b) {
-    return $a * $b;
+    return $a / $b;
   };
 
   $three = function ($a, $b, $c) {
-    return $a * $b * $c;
+    return $a / $b / $c;
   };
 
   $divide10By = bind($divide, 10);
@@ -38,13 +38,20 @@ function main() {
   $alpha = curry($one);
   var_dump($alpha(2));
 
-  var_dump($two(2, 3));
+  var_dump($two(5, 2));
   $alpha = curry($two);
-  $beta = $alpha(2);
-  var_dump($beta(3));
+  $beta = $alpha(5);
+  var_dump($beta(2));
 
   var_dump($three(2, 3, 4));
   $alpha = curry($three);
+  $beta = $alpha(2);
+  $gamma = $beta(3);
+  $omega = $gamma(4);
+  var_dump($omega);
+
+  var_dump($three(4, 3, 2));
+  $alpha = curry_right($three);
   $beta = $alpha(2);
   $gamma = $beta(3);
   $omega = $gamma(4);
@@ -54,6 +61,14 @@ function main() {
 }
 
 function curry(Closure $closure) {
+  return _curry($closure, 1);
+}
+
+function curry_right(Closure $closure) {
+  return _curry($closure, -1);
+}
+
+function _curry(Closure $closure, $direction) {
   $argument_count = (new ReflectionFunction($closure))->getNumberOfParameters();
   if ($argument_count < 2) {
     // We just return the plain closure.
@@ -61,18 +76,21 @@ function curry(Closure $closure) {
   }
   else {
     $remaining_steps = $argument_count;
-    return function ($arg) use ($remaining_steps, $closure) {
-      return _curry_step([$arg], $remaining_steps, $closure);
+    return function ($arg) use ($remaining_steps, $closure, $direction) {
+      return _curry_step([$arg], $remaining_steps, $closure, $direction);
     };
   }
 }
 
-function _curry_step(array $args, $remaining_steps, Closure $closure) {
+function _curry_step(array $args, $remaining_steps, Closure $closure, $direction) {
   --$remaining_steps;
   if ($remaining_steps > 0) {
-    return function ($arg) use ($remaining_steps, $closure, $args) {
-      $args[] = $arg;
-      return _curry_step($args, $remaining_steps, $closure);
+    return function ($arg) use ($remaining_steps, $closure, $args, $direction) {
+      $to_merge = [
+        $direction > 0 ? $args : [$arg],
+        $direction > 0 ? [$arg] : $args,
+      ];
+      return _curry_step(array_merge(...$to_merge), $remaining_steps, $closure, $direction);
     };
   }
   else {
