@@ -1,5 +1,9 @@
 <?php
 
+require './vendor/autoload.php';
+
+use Vindaloo\Helper as V;
+
 main();
 
 function main() {
@@ -24,85 +28,38 @@ function main() {
     return $a / $b / $c;
   };
 
-  $divide10By = bind($divide, 10);
-  $divideBy10 = bind_right($divide, 10);
+  $divide10By = V\bind($divide, 10);
+  $divideBy10 = V\bind_right($divide, 10);
 
   var_dump($divide10By(10));  // Outputs 1
   var_dump($divideBy10(100)); // Outputs 10
 
   var_dump($zero());
-  $alpha = curry($zero);
+  $alpha = V\curry($zero);
   var_dump($alpha());
 
   var_dump($one(2));
-  $alpha = curry($one);
+  $alpha = V\curry($one);
   var_dump($alpha(2));
 
   var_dump($two(5, 2));
-  $alpha = curry($two);
+  $alpha = V\curry($two);
   $beta = $alpha(5);
   var_dump($beta(2));
 
   var_dump($three(2, 3, 4));
-  $alpha = curry($three);
+  $alpha = V\curry($three);
   $beta = $alpha(2);
   $gamma = $beta(3);
   $omega = $gamma(4);
   var_dump($omega);
 
   var_dump($three(4, 3, 2));
-  $alpha = curry_right($three);
+  $alpha = V\curry_right($three);
   $beta = $alpha(2);
   $gamma = $beta(3);
   $omega = $gamma(4);
   var_dump($omega);
 
-
-}
-
-function curry(Closure $closure) {
-  return _curry($closure, 1);
-}
-
-function curry_right(Closure $closure) {
-  return _curry($closure, -1);
-}
-
-function _curry(Closure $closure, $direction) {
-  $argument_count = (new ReflectionFunction($closure))->getNumberOfParameters();
-  if ($argument_count < 2) {
-    // We just return the plain closure.
-    return $closure;
-  }
-  else {
-    $remaining_steps = $argument_count;
-    return function ($arg) use ($remaining_steps, $closure, $direction) {
-      return _curry_step([$arg], $remaining_steps, $closure, $direction);
-    };
-  }
-}
-
-function _curry_step(array $args, $remaining_steps, Closure $closure, $direction) {
-  if ($remaining_steps > 1) {
-    return function ($arg) use ($args, $remaining_steps, $closure, $direction) {
-      $new_args = $direction > 0 ? array_merge($args, [$arg]) : array_merge([$arg], $args);
-      return _curry_step($new_args, $remaining_steps - 1, $closure, $direction);
-    };
-  }
-  else {
-    return $closure(...$args);
-  }
-};
-
-function bind(Closure $closure, ...$early_args): Closure {
-  return function (...$late_args) use ($closure, $early_args) {
-    return $closure(...array_merge($early_args, $late_args));
-  };
-}
-
-function bind_right(Closure $closure, ...$early_args): Closure {
-  return function (...$late_args) use ($closure, $early_args) {
-    return $closure(...array_merge($late_args, $early_args));
-  };
 }
 
