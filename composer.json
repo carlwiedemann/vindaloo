@@ -1,11 +1,5 @@
 {
     "name": "c4rl/vindaloo",
-    "authors": [
-        {
-            "name": "Carl Wiedemann",
-            "email": "carl.wiedemann@gmail.com"
-        }
-    ],
     "license": "MIT",
     "minimum-stability": "stable",
     "require": {
