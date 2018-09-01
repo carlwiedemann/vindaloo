@@ -47,17 +47,17 @@ class PartialTest extends TestCase {
   public function testBindRight() {
     $closure = $this->getClosure();
 
-    $boundRightWith4 = Partial::bind_right($closure, 4);
-    $boundRightWith4And3 = Partial::bind_right($closure, 4, 3);
-    $boundRightWith4And3And2 = Partial::bind_right($closure, 4, 3, 2);
+    $boundRightWith4 = Partial::bindRight($closure, 4);
+    $boundRightWith4And3 = Partial::bindRight($closure, 4, 3);
+    $boundRightWith4And3And2 = Partial::bindRight($closure, 4, 3, 2);
 
     $this->assertEquals(1, $boundRightWith4(2, 3));
     $this->assertEquals(1, $boundRightWith4And3(2));
     $this->assertEquals(1, $boundRightWith4And3And2());
 
-    $boundRightWith2 = Partial::bind_right($closure, 2);
-    $boundRightWith2And3 = Partial::bind_right($closure, 2, 3);
-    $boundRightWith2And3And4 = Partial::bind_right($closure, 2, 3, 4);
+    $boundRightWith2 = Partial::bindRight($closure, 2);
+    $boundRightWith2And3 = Partial::bindRight($closure, 2, 3);
+    $boundRightWith2And3And4 = Partial::bindRight($closure, 2, 3, 4);
 
     $this->assertEquals(5, $boundRightWith2(4, 3));
     $this->assertEquals(5, $boundRightWith2And3(4));

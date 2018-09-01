@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Vindaloo\Curry;
+use Vindaloo\CurryRight;
 use Vindaloo\Helper as V;
 
 /**
@@ -35,13 +36,13 @@ class CurryTest extends TestCase {
   public function testCurry() {
     $closure = $this->getClosure();
 
-    $a = Curry::curry($closure);
+    $a = (new Curry($closure))->execute();
     $b = $a(2);
     $c = $b(3);
     $d = $c(4);
     $this->assertEquals(1, $d);
 
-    $e = Curry::curry($closure);
+    $e = (new Curry($closure))->execute();
     $f = $e(4);
     $g = $f(3);
     $h = $g(2);
@@ -54,13 +55,13 @@ class CurryTest extends TestCase {
   public function testCurryRight() {
     $closure = $this->getClosure();
 
-    $a = Curry::curry_right($closure);
+    $a = (new CurryRight($closure))->execute();
     $b = $a(4);
     $c = $b(3);
     $d = $c(2);
     $this->assertEquals(1, $d);
 
-    $e = Curry::curry_right($closure);
+    $e = (new CurryRight($closure))->execute();
     $f = $e(2);
     $g = $f(3);
     $h = $g(4);
