@@ -34,3 +34,4 @@ Partially applies arguments to the given closure, right-precedent arguments.
 
 * Some examples in this readme pls
 * bind_args with placeholders
+* See https://javascript.info/currying-partials for more
